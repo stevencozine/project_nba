@@ -1,4 +1,4 @@
-# import logging
+import logging
 # import argparse
 import numpy as np
 import pandas as pd
@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from project_nba.objects.player import Player
 from google.cloud import bigquery
 
-# LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class GenerateNewStats:
@@ -24,12 +24,12 @@ class GenerateNewStats:
     def generate_data(
             self
     ) -> None:
-        print("GENERATE")
+        logging.info("GENERATE")
         data = self.scrape([self.total_stats, self.adv_stats])
         self.write(data)
 
     def scrape(self, urls):
-        print("SCRAPE")
+        logging.info("SCRAPE")
         stat_url = urls[0]
         adv_url = urls[1]
 
@@ -62,11 +62,11 @@ class GenerateNewStats:
         final_df["WS48"] = final_df["WS/48"]
         final_df = final_df[cols]
         final_df = final_df.astype(Player.df_schema())
-        print(df.columns)
+        logging.info(df.columns)
         return final_df
 
     def write(self, data):
-        print(f"WRITE to {self.PROJECT_ID}:{self.DATASET}.{self.TABLE}")
+        logging.info(f"WRITE to {self.PROJECT_ID}:{self.DATASET}.{self.TABLE}")
         table = f"{self.DATASET}.{self.TABLE}"
         client = bigquery.Client()
         job_config = bigquery.LoadJobConfig(schema=Player.bq_schema_field())
@@ -78,8 +78,8 @@ class GenerateNewStats:
 
 
 if __name__ == "__main__":
-    # logging.basicConfig(level=logging.DEBUG)
-    print("ENTER")
+    logging.basicConfig(level=logging.DEBUG)
+    logging.info("ENTER")
     # parser = argparse.ArgumentParser()
     conf = ConfigFactory.parse_file('/home/admin/src/project_nba/config/application.conf')
     generator = GenerateNewStats(conf)
