@@ -14,6 +14,10 @@ class DataPrep(BaseBeamJob):
     def __init__(self, config: ConfigFactory):
         super().__init__(config)
 
+    @staticmethod
+    def debug(row):
+        return row
+
     def dataprep(
         self,
         job_name,
@@ -38,7 +42,7 @@ class DataPrep(BaseBeamJob):
             dataprep = (
                 (historic_stats, new_stats)
                 | "Merge Data" >> beam.Flatten()
-                | "Transform Data" >> 
+                | "Transform Data" >> beam.Map(DataPrep.debug)
             )
 
         return dataprep
